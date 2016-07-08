@@ -34,6 +34,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.vmware.vim25.HostService;
+import com.vmware.vim25.mo.HostServiceSystem;
+import com.vmware.vim25.mo.HostSystem;
 import com.vmware.vim25.mo.InventoryNavigator;
 import com.vmware.vim25.mo.ManagedEntity;
 import com.vmware.vim25.mo.ServiceInstance;
@@ -69,6 +72,12 @@ public class FetchStats
     public static final String MANAGEDENTITY_PARENT_PROPERTYNAME = "parent";
     private boolean ALERT_MEMORY_USAGE = false;
     private boolean hostdResponsive = true;
+
+    // SSH service
+    private final String SSH_SERVICE = "TSM-SSH";
+    private String SERVICE_RUNNING = "on";
+    private String SERVICE_STOPPED = "off";
+    private boolean cleanupStopSSHService = false;
 
     /**
      * Constructor
@@ -190,25 +199,32 @@ public class FetchStats
                     System.out.println("\t\t\tHost : " + tempHostName);
                     System.out.println(
                         "******************************************************************************");
-                    // Get SSHConnection
-                    sshConn = SSHUtil.getSSHConnection(tempHostName, esx_username,
-                        esx_password);
-                    if (sshConn != null) {
-                        System.out.println("\n*** About to retrieve hostd MEMORY information ...");
-                        memoryResourceChecker(sshConn);
-                        System.out.println("\n*** About to retrieve hostd THREAD information ...");
-                        threadResourceChecker(sshConn);
-                        System.out.println("\n*** About to retrieve hostd FD information ...");
-                        FDResourceChecker(sshConn);
-                        System.out.println("\n*** About to retrieve hostd RESPONSIVENESS information ...");
-                        responseChecker(sshConn);
-                    } else {
-                        System.err.println("Caught exception while fetching SSH Connection object");
+
+                    if (startSSHService((HostSystem)host)) {
+                        // Get SSHConnection
+                        sshConn = SSHUtil.getSSHConnection(tempHostName, esx_username,
+                            esx_password);
+                        if (sshConn != null) {
+                            System.out.println("\n*** About to retrieve hostd MEMORY information ...");
+                            memoryResourceChecker(sshConn);
+                            System.out.println("\n*** About to retrieve hostd THREAD information ...");
+                            threadResourceChecker(sshConn);
+                            System.out.println("\n*** About to retrieve hostd FD information ...");
+                            FDResourceChecker(sshConn);
+                            System.out.println("\n*** About to retrieve hostd RESPONSIVENESS information ...");
+                            responseChecker(sshConn);
+                        } else {
+                            System.err.println("Caught exception while fetching SSH Connection object");
+                        }
                     }
 
                 } catch (Exception e) {
                     System.err.println("Caught exception while fetching stats from host: " + tempHostName);
                 } finally {
+                    if (cleanupStopSSHService) {
+                        System.out.println("Reverting the SSH Service state, as it was before");
+                        stopSSHService((HostSystem)host);
+                    }
                     if (sshConn != null) {
                         sshConn.close();
                     }
@@ -608,4 +624,109 @@ public class FetchStats
           }
        }
     }
+
+    /**
+     * Start SSH Services
+     */
+    private boolean
+    startSSHService(HostSystem hostSys)
+    {
+        boolean startedService = false;
+
+        try {
+            HostServiceSystem hss = hostSys.getHostServiceSystem();
+            for (HostService tempHs : hss.getServiceInfo().getService()) {
+                String id = tempHs.getKey();
+                if (SSH_SERVICE.equalsIgnoreCase(id)) {
+                    if (!(getServiceState(hostSys, id).equalsIgnoreCase(SERVICE_RUNNING))) {
+                        hss.startService(id);
+
+                        // Check if we indeed were successful in starting services
+                        if (getServiceState(hostSys, id).equalsIgnoreCase(SERVICE_RUNNING)) {
+                            System.out.println(SSH_SERVICE + " service is in running state now");
+                            startedService = true;
+
+                            // below flag is for cleanup purpose - restoring
+                            // previous state
+                            cleanupStopSSHService = true;
+                            break;
+                        } else {
+                            System.err.println(SSH_SERVICE + " service could not be started");
+                            break;
+                        }
+                    } else {
+                        System.out.println(SSH_SERVICE + " service is already in running state");
+                        startedService = true;
+                        break;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Caught exception while starting SSH service");
+        }
+
+        return startedService;
+    }
+
+    /**
+     * Stop SSH Services
+     */
+    private boolean
+    stopSSHService(HostSystem hostSys)
+    {
+        boolean stoppedService = false;
+
+        try {
+            HostServiceSystem hss = hostSys.getHostServiceSystem();
+            for (HostService tempHs : hss.getServiceInfo().getService()) {
+                String id = tempHs.getKey();
+                if (SSH_SERVICE.equalsIgnoreCase(id)) {
+                    if (!(getServiceState(hostSys, id).equalsIgnoreCase(SERVICE_STOPPED))) {
+                        hss.stopService(id);
+
+                        // Check if we indeed were successful in stopping services
+                        if (getServiceState(hostSys, id).equalsIgnoreCase(SERVICE_STOPPED)) {
+                            System.out.println(SSH_SERVICE + " service is stopped now");
+                            stoppedService = true;
+                            break;
+                        } else {
+                            System.err.println(SSH_SERVICE + " service could not be stopped");
+                            break;
+                        }
+                    } else {
+                        System.out.println(SSH_SERVICE + " service is already stopped");
+                        stoppedService = true;
+                        break;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Caught exception while turning off SSH service");
+        }
+
+        return stoppedService;
+    }
+
+    /**
+     * Get ServiceState
+     */
+    private String
+    getServiceState(HostSystem hs, String id) throws Exception
+    {
+        String serviceState = null;
+
+        HostServiceSystem hss = hs.getHostServiceSystem();
+        for (HostService tempHsService : hss.getServiceInfo().getService()) {
+            if (id.equalsIgnoreCase(tempHsService.getKey())) {
+                if (tempHsService.isRunning()) {
+                    serviceState = SERVICE_RUNNING;
+                } else {
+                    serviceState = SERVICE_STOPPED;
+                }
+            }
+        }
+
+        return serviceState;
+    }
+
 }
