@@ -17,6 +17,8 @@ If SSH Service is disabled, using APIs utility enables SSH service on each ESXi 
  *  Run the utility from 'RunApp' program by providing arguments like:  
  _--vsphereip 1.2.3.4 --username adminUser --password dummyPasswd --esxUsername rootUser --esxPassword rootPwd_
 
+If the username and password for ESXi hosts differ, source code can easily be edited to include simple logic to fetch username/password per ESXi host.
+
 ##### Run from Pre-built Jars
  * Copy/Download the hostdstat.jar from Runnable-jar folder (from the uploaded file) and unzip on to local drive folder say c:\hostdstat
  * Open a command prompt and cd to the folder, lets say cd hostdstat
