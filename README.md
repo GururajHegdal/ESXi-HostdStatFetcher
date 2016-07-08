@@ -6,6 +6,9 @@ Utility to retrieve ESXi Hostd Service Stats such as
  * FD Usage and Limit
  * Responsiveness
 
+Utility connects to provided vCenter Server IP with the credentials and retrieves all ESXi hosts that are currently managed. Then for each of the ESXi host, utility connects via SSH to run commands and retrieve HOSTD service stats. Once done SSH Connection is closed.
+If SSH Service is disabled, using APIs utility enables SSH service on each ESXi host and once done, reverts SSH Service state (i.e stops the service).
+
 ### 2. How to run the Utility?
 ##### Run from Dev IDE
 
