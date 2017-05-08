@@ -27,65 +27,16 @@ If the username and password for ESXi hosts differ, source code can easily be ed
  
 ### 3. Sample output
 ```
-Logging into vSphere : 192.168.1.1, with provided credentials
-Succesfully logged into vSphere: 192.168.1.1
-Succesfully logged into VC: 192.168.1.1
-Search for specified vApp in inventory...
-Found vApp: SrcDummyvApp in inventory
-Found Source Host: ESXiHost1
-Retrieve Hosts list from inventory ...
-Found more than one host in inventory, forming target host's list for vApp deployment
-
-***************  ITERATION - 1  *************** 
-vAPP Clone/Deploy operation is about to start ...
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Host : ESXiHost2
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-vAPP Clone/Deploy operation is about to start ...
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Host : ESXiHost3
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Monitor vApp: SrcDummyvApp20170508-162016-084ESXiHost2 deployment task ...
-[SrcDummyvApp20170508-162016-084ESXiHost2-Deploy task] Task is still running
-[SrcDummyvApp20170508-162016-084ESXiHost2-Deploy task] Task is still running
-Monitor vApp: SrcDummyvApp20170508-162019-225ESXiHost3 deployment task ...
-[SrcDummyvApp20170508-162019-225ESXiHost3-Deploy task] Task is still running
-[SrcDummyvApp20170508-162016-084ESXiHost2-Deploy task] Task is still running
-[SrcDummyvApp20170508-162019-225ESXiHost3-Deploy task] Task is still running
-[SrcDummyvApp20170508-162016-084ESXiHost2-Deploy task] Task Completed
-vApp: SrcDummyvApp20170508-162016-084ESXiHost2 deployment suceeded
-Poweron All VMs from vApp: SrcDummyvApp20170508-162016-084ESXiHost2
-[SrcDummyvApp20170508-162016-084ESXiHost2-PowerOn VM] Task Completed
-All VMs from vAPP: SrcDummyvApp20170508-162016-084ESXiHost2 have been poweredOn successfully
-Begin cleanup tasks ...
-[SrcDummyvApp20170508-162019-225ESXiHost3-Deploy task] Task is still running
-[SrcDummyvApp20170508-162019-225ESXiHost3-Deploy task] Task Completed
-vApp: SrcDummyvApp20170508-162019-225ESXiHost3 deployment suceeded
-Poweron All VMs from vApp: SrcDummyvApp20170508-162019-225ESXiHost3
-[SrcDummyvApp20170508-162019-225ESXiHost3-PowerOn VM] Task Completed
-All VMs from vAPP: SrcDummyvApp20170508-162019-225ESXiHost3 have been poweredOn successfully
-Begin cleanup tasks ...
-Power off all poweredOn VMs, if any
-[SrcDummyvApp20170508-162016-084ESXiHost2-PowerOff VM] Task is still running
-Power off all poweredOn VMs, if any
-[SrcDummyvApp20170508-162016-084ESXiHost2-PowerOff VM] Task Completed
-All VMs from vAPP: SrcDummyvApp20170508-162016-084ESXiHost2 have been poweredOff successfully
-[SrcDummyvApp20170508-162016-084ESXiHost2-PowerOff VM] Task Completed
-[SrcDummyvApp20170508-162016-084ESXiHost2-PowerOff VM] Task Completed
-All VMs from vAPP: SrcDummyvApp20170508-162016-084ESXiHost2 have been poweredOff successfully
-Destory the vAPP
-[SrcDummyvApp20170508-162019-225ESXiHost3-PowerOff VM] Task is still running
-[SrcDummyvApp20170508-162019-225ESXiHost3-PowerOff VM] Task Completed
-All VMs from vAPP: SrcDummyvApp20170508-162019-225ESXiHost3 have been poweredOff successfully
-[SrcDummyvApp20170508-162019-225ESXiHost3-PowerOff VM] Task Completed
-[SrcDummyvApp20170508-162019-225ESXiHost3-PowerOff VM] Task is still running
-[SrcDummyvApp20170508-162019-225ESXiHost3-PowerOff VM] Task Completed
-All VMs from vAPP: SrcDummyvApp20170508-162019-225ESXiHost3 have been poweredOff successfully
-Destory the vAPP
-[SrcDummyvApp20170508-162016-084ESXiHost2-Destroy vApp] Task is still running
-[SrcDummyvApp20170508-162016-084ESXiHost2-Destroy vApp] Task Completed
-vApp: SrcDummyvApp20170508-162016-084ESXiHost2 destroyed successfully
-[SrcDummyvApp20170508-162019-225ESXiHost3-Destroy vApp] Task is still running
-[SrcDummyvApp20170508-162019-225ESXiHost3-Destroy vApp] Task Completed
-vApp: SrcDummyvApp20170508-162019-225ESXiHost3 destroyed successfully
+^^^^^^^^^^^^^^^^^   S T A T S   ^^^^^^^^^^^^^^^^^
+* MEMORY:
+--- Usage:63.79 MB, Limit:268.00 MB
+--- Threshold: 23.802238%, ALERT:GREEN
+* THREAD:
+--- Usage:0, Limit:22
+--- Threshold: 0.0%, ALERT:GREEN
+* FD:
+--- Usage:285, Limit:3126
+--- Threshold: 9.117083%, ALERT:GREEN
+* RESPONSIVENESS:
+--- Hostd responsive:true, RESPONSE ALERT:GREEN
 ```
